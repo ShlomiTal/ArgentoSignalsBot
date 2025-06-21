@@ -18,33 +18,28 @@ app = Flask(__name__)
 scheduler = BackgroundScheduler()
 scheduler.start()
 
-# Track last sent signals
 last_sent = {}
 
-# === Telegram Messaging ===
 def send_telegram_message(text):
     if not TELEGRAM_TOKEN or not CHAT_ID:
         return
-    url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
+    url = f"https://api.telegram.org/bot8134855198:AAFqrjHZnBgHHKG27KFlYDotYu09Ld5GHyg/sendMessage"
     data = {"chat_id": CHAT_ID, "text": text}
     try:
         requests.post(url, data=data)
     except Exception as e:
         print("Telegram Error:", e)
 
-# === Simulated Signal Function ===
 def generate_signal(asset):
     import random
     choices = ["BUY", "SELL", "HOLD"]
     return random.choice(choices), round(random.uniform(100, 10000), 2)
 
-# === Signal Route ===
 @app.route("/signals")
 def signals():
     symbol = request.args.get("symbol", "BTC")
     signal, price = generate_signal(symbol)
 
-    # Control HOLD spam
     now = time.time()
     if signal == "HOLD":
         last_hold = last_sent.get(f"{symbol}_HOLD", 0)
@@ -53,14 +48,12 @@ def signals():
         last_sent[f"{symbol}_HOLD"] = now
 
     if signal in ["BUY", "SELL"]:
-        message = f"📊 Argento AI Signal – {symbol}
-\n💰 Price: ${price}\nSignal: {signal}"
+        message = f"📊 Argento AI Signal – {symbol}\n\n💰 Price: ${price}\nSignal: {signal}"
         send_telegram_message(message)
         last_sent[symbol] = signal
 
     return jsonify({"symbol": symbol, "signal": signal, "price": price})
 
-# === Backtest Simulation ===
 @app.route("/backtest")
 def backtest():
     symbol = request.args.get("symbol", "BTC")
@@ -72,7 +65,6 @@ def backtest():
     }
     return jsonify(result)
 
-# === Admin Dashboard ===
 @app.route("/admin")
 def admin():
     if request.args.get("password") != ADMIN_PASSWORD:
@@ -83,7 +75,6 @@ def admin():
         "last_signals": last_sent
     })
 
-# === Settings Page (stub) ===
 @app.route("/settings")
 def settings():
     if request.args.get("password") != SETTINGS_PASSWORD:
@@ -98,7 +89,6 @@ def settings():
         "logo": "default"
     })
 
-# === Market Alerts (simulated) ===
 def check_market_alerts():
     from datetime import datetime
     now = datetime.utcnow()
@@ -120,32 +110,24 @@ def check_market_alerts():
 
 scheduler.add_job(check_market_alerts, "interval", minutes=1)
 
-# === Auto Scan & Report ===
 def auto_scan():
     tracked = ["BTC", "ETH", "XAUUSD", "USD/EUR", "ZBCN"]
     for symbol in tracked:
         signal, price = generate_signal(symbol)
         if signal in ["BUY", "SELL"]:
             summary = (
-                f"📊 Signal Scan – {symbol}
-"
-                f"💰 Price: ${price}
-"
-                f"Signal: {signal}
-"
-                f"Trend: Simulated
-"
-                f"Sentiment: Neutral
-"
-                f"Backtest: WinRate 75%, Sharpe 1.9
-"
+                f"📊 Signal Scan – {symbol}\n"
+                f"💰 Price: ${price}\n"
+                f"Signal: {signal}\n"
+                f"Trend: Simulated\n"
+                f"Sentiment: Neutral\n"
+                f"Backtest: WinRate 75%, Sharpe 1.9\n"
                 f"⏰ Time: {time.strftime('%H:%M UTC')}"
             )
             send_telegram_message(summary)
 
 scheduler.add_job(auto_scan, "interval", hours=1)
 
-# === Root Ping ===
 @app.route("/")
 def index():
     return "✅ Argento is Live. Backend is running."
