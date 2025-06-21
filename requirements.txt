@@ -9,3 +9,4 @@ plotly
 requests
 python-dotenv
 kaleido
+apscheduler
