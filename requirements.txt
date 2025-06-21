@@ -1,0 +1,8 @@
+flask
+pandas
+ta
+python-binance
+scikit-learn
+plotly
+requests
+python-dotenv
