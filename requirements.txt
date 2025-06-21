@@ -3,6 +3,8 @@ pandas
 ta
 python-binance
 scikit-learn
+xgboost
+lightgbm
 plotly
 requests
 python-dotenv
