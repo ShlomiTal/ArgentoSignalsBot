@@ -1,6 +1,6 @@
 import os
 import requests
-from flask import Flask, request, jsonify
+from flask import Flask
 from dotenv import load_dotenv
 from apscheduler.schedulers.background import BackgroundScheduler
 from datetime import datetime, timezone
@@ -14,8 +14,6 @@ TWELVE_DATA_API_KEY = os.getenv("TWELVE_DATA_API_KEY")
 app = Flask(__name__)
 scheduler = BackgroundScheduler()
 scheduler.start()
-
-last_sent = {}
 
 def send_telegram_message(text):
     try:
@@ -33,7 +31,11 @@ def get_price(symbol):
     try:
         url = f"https://api.twelvedata.com/price?symbol={symbol}&apikey={TWELVE_DATA_API_KEY}"
         response = requests.get(url)
-        return float(response.json()["price"])
+        data = response.json()
+        if "price" in data:
+            return float(data["price"])
+        print(f"[Price Missing] {symbol} →", data)
+        return None
     except Exception as e:
         print(f"[Price Error] {symbol}:", e)
         return None
@@ -45,13 +47,13 @@ def generate_signal(symbol):
     return signal, price
 
 def auto_scan():
-    tracked = ["BTC/USD", "ETH/USD", "BNB/USD", "XRP/USD", "VIRTUAL/USD", "ZBCN/USD",
+    tracked = ["BTC/USD", "ETH/USD", "BNB/USD", "XRP/USD", "ZBCN/USD",
                "USD/EUR", "USD/GBP", "GBP/USD", "XAU/USD"]
     summaries = []
     for symbol in tracked:
         try:
             signal, price = generate_signal(symbol)
-            if signal in ["BUY", "SELL"]:
+            if signal in ["BUY", "SELL"] and price is not None:
                 summaries.append(f"📊 {symbol}: {signal} at ${price}")
         except Exception as e:
             print(f"[SCAN ERROR] {symbol} –", e)
