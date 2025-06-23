@@ -1,1 +1,8 @@
-// Placeholder content for requirements.txt
+flask
+python-dotenv
+requests
+pandas
+numpy
+scikit-learn
+ta
+joblib

@@ -1,1 +1,14 @@
-// Placeholder content for settings.json
+// 📄 File: /backend/settings.json
+{
+  "ai_mode": "ml",
+  "use_correlation": true,
+  "correlation_chat_id": "PUT_OTHER_CHAT_ID_HERE",
+  "confidence_threshold": 75,
+  "signal_schedule": ["09:00", "13:00", "17:00"],
+  "premium_report_recipient": "PUT_PREMIUM_USER_CHAT_ID_HERE",
+  "language": "dual",
+  "enable_hold_timer": true,
+    "market_open_us": "🇺🇸 US market is now OPEN!",
+    "market_open_eu": "🇪🇺 European market is OPEN!",
+    "market_open_asia": "🇯🇵 Asian market is OPEN!"
+}
