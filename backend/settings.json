@@ -1,0 +1,7 @@
+{
+  "tradingPairs": ["BTC/USD", "ETH/USD"],
+  "confidenceThreshold": 0.8,
+  "telegramMessage": "New Signal: {asset} at {price}",
+  "schedule": "09:00",
+  "correlationModule": true
+}
